@@ -1,0 +1,8 @@
+[package]
+name = "html_ast"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+scraper = "0.19.1"
+
