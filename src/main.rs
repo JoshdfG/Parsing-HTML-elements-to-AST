@@ -1,18 +1,17 @@
 extern crate scraper;
-
-use scraper::Html;
-
+use scraper::{Html, Selector};
 mod lib;
 
-fn parse_html_to_ast(html: &str) -> Html {
-    Html::parse_document(html)
-}
-
 fn main() {
-    let html_strings = lib::HTML_STRINGS;
+    // Parse the HTML content
+    let document = Html::parse_document(lib::HTML_CONTENT);
 
-    html_strings
-        .iter()
-        .map(|html| parse_html_to_ast(html))
-        .for_each(|dom| println!("{:#?}", dom));
+    // Create a selector for the paragraph tag
+    let selector = Selector::parse("p,a,h1,ul,li,table,span").unwrap();
+
+    // Find all elements that match the selector
+    for element in document.select(&selector) {
+        // This line will Extract and print the text content of the element
+        println!("Text: {}", element.text().collect::<Vec<_>>().concat());
+    }
 }
