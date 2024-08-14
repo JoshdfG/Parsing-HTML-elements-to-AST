@@ -70,11 +70,14 @@ fn parse_html(html: &str) -> Vec<(String, Vec<(String, String)>, String)> {
 
 fn main() {
     let parsed_data = parse_html(HTML_CONTENT);
-    for (tag, attributes, content) in parsed_data {
-        println!("Tag: {}", tag);
-        for (name, value) in attributes {
-            println!("  {} = {}", name, value);
-        }
-        println!("  Content: {}", content);
-    }
+
+    parsed_data
+        .into_iter()
+        .for_each(|(tag, attributes, content)| {
+            println!("Tag: {}", tag);
+            attributes.into_iter().for_each(|(name, value)| {
+                println!("  {} = {}", name, value);
+            });
+            println!("  Content: {}", content);
+        });
 }
