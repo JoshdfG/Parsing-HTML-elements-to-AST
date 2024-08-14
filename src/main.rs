@@ -9,7 +9,13 @@ enum HtmlState {
     InsideTagContent,
 }
 
-fn parse_html(html: &str) -> Vec<(String, Vec<(String, String)>, String)> {
+struct Tag {
+    tag: String,
+    attributes: Vec<(String, String)>,
+    content: String,
+}
+
+fn parse_html(html: &str) -> Vec<Tag> {
     let mut state = HtmlState::OutsideTag;
     let mut current_tag = String::new();
     let mut current_attribute_name = String::new();
@@ -45,14 +51,14 @@ fn parse_html(html: &str) -> Vec<(String, Vec<(String, String)>, String)> {
                 state = HtmlState::InsideTagContent;
             }
             (HtmlState::InsideTagContent, '<') => {
-                parsed_data.push((
-                    current_tag.clone(),
-                    attributes.clone(),
-                    current_tag_content.clone(),
-                ));
-                current_tag.clear();
-                attributes.clear();
-                current_tag_content.clear();
+                parsed_data.push(Tag {
+                    tag: current_tag.into(),
+                    attributes: attributes.into(),
+                    content: current_tag_content.into(),
+                });
+                current_tag = String::new();
+                attributes = Vec::new();
+                current_tag_content = String::new();
                 state = HtmlState::InsideTag;
             }
             _ => match state {
@@ -71,13 +77,11 @@ fn parse_html(html: &str) -> Vec<(String, Vec<(String, String)>, String)> {
 fn main() {
     let parsed_data = parse_html(HTML_CONTENT);
 
-    parsed_data
-        .into_iter()
-        .for_each(|(tag, attributes, content)| {
-            println!("Tag: {}", tag);
-            attributes.into_iter().for_each(|(name, value)| {
-                println!("  {} = {}", name, value);
-            });
-            println!("  Content: {}", content);
+    parsed_data.into_iter().for_each(|target| {
+        println!("Tag: {}", target.tag);
+        target.attributes.into_iter().for_each(|(name, value)| {
+            println!("  {} = {}", name, value);
         });
+        println!("  Content: {}", target.content);
+    });
 }
