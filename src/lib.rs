@@ -20,7 +20,6 @@ pub const HTML_CONTENT: &str = r#"
         <div>This is a div.</div>
         <span>This is a span.</span>
         <button>This is a button.</button>
-        <input type="text" placeholder="This is an input field." />
         <select>
             <option>Option 1</option>
             <option>Option 2</option>

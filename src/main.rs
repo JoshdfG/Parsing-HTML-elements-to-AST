@@ -1,17 +1,51 @@
-extern crate scraper;
-use scraper::{Html, Selector};
-mod lib;
+use html_ast::HTML_CONTENT;
+
+#[derive(Clone, Copy)]
+enum HtmlState {
+    OutsideTag,
+    InsideTag,
+    InsideAttributeName,
+    InsideAttributeValue,
+    InsideTagContent,
+}
+
+fn parse_html(html: &str) -> Vec<String> {
+    let mut state = HtmlState::OutsideTag;
+    let mut current_tag_content = String::new();
+    let mut parsed_data = Vec::new();
+
+    for ch in html.chars() {
+        match (state, ch) {
+            (HtmlState::OutsideTag, '<') => {
+                state = HtmlState::InsideTag;
+            }
+            (HtmlState::InsideTag, '>') => {
+                state = HtmlState::InsideTagContent;
+            }
+            (HtmlState::InsideTagContent, '<') => {
+                if !current_tag_content.is_empty() {
+                    parsed_data.push(current_tag_content.clone());
+                    current_tag_content.clear();
+                }
+                state = HtmlState::InsideTag;
+            }
+            _ => match state {
+                HtmlState::InsideTagContent => current_tag_content.push(ch),
+                _ => {}
+            },
+        }
+    }
+
+    if !current_tag_content.is_empty() {
+        parsed_data.push(current_tag_content);
+    }
+
+    parsed_data
+}
 
 fn main() {
-    // Parse the HTML content
-    let document = Html::parse_document(lib::HTML_CONTENT);
-
-    // Create a selector for the paragraph tag
-    let selector = Selector::parse("p,a,h1,ul,li,table,span").unwrap();
-
-    // Find all elements that match the selector
-    for element in document.select(&selector) {
-        // This line will Extract and print the text content of the element
-        println!("Text: {}", element.text().collect::<Vec<_>>().concat());
+    let parsed_data = parse_html(HTML_CONTENT);
+    for content in parsed_data {
+        println!("{}", content);
     }
 }
