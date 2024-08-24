@@ -12,10 +12,8 @@ pub const HTML_CONTENT: &str = r#"
         <aside>This is an aside.</aside>
         <h1 class="red">Hello, World!</h1>
         <p className="text-blue-500">Hi</p>
-
         <h2>This is a secondary heading.</h2>
-
-
+        <img src="src/img.jpg"/>
     </body>
 </html>
 "#;
