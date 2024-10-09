@@ -28,7 +28,7 @@ pub fn parse_html(html: &str) -> Vec<ParsedHtml> {
     let mut current_tag_content = String::new();
     let mut parsed_data = Vec::new();
     let mut is_self_closing = false;
-    let mut tag_stack: Vec<String> = Vec::new(); // Explicit type annotation for tag_stack
+    let mut tag_stack: Vec<String> = Vec::new();
     let mut inside_quotes = false;
 
     for ch in html.chars() {
@@ -70,14 +70,12 @@ pub fn parse_html(html: &str) -> Vec<ParsedHtml> {
                 inside_quotes = false;
             }
             (HtmlState::InsideAttributeName, ' ') => {
-                // Handle cases where attribute names are separated by spaces
                 if !current_attribute_name.is_empty() {
                     attributes.push_str(&current_attribute_name);
                     current_attribute_name.clear();
                 }
             }
             (HtmlState::InsideAttributeName, '>') => {
-                // Handle case where there's a '>' directly after attribute name without value
                 if !current_attribute_name.is_empty() {
                     attributes.push_str(&current_attribute_name);
                     current_attribute_name.clear();
